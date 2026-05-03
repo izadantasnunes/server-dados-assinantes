@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Dados Assinantes</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <aside class="leftbar">
+    <div class="logo">
+      <span>Server</span><strong>Dados</strong>
+      <small>Assinantes</small>
+    </div>
+
+    <div class="quick-tabs">
+      <button data-panel="recentes">Recente</button>
+      <button data-panel="favoritos">Favoritos</button>
+    </div>
+
+    <div class="tree-title">Servidor: localhost</div>
+    <ul class="tree">
+      <li class="tree-item" data-table="novo">▸ Novo</li>
+      <li class="tree-item active" data-table="database">▾ server_dados_assinantes</li>
+      <li class="table-link active" data-table="assinantes">▦ assinantes</li>
+      <li class="table-link" data-table="enderecos">▦ enderecos</li>
+      <li class="table-link" data-table="planos">▦ planos</li>
+      <li class="table-link" data-table="assinaturas">▦ assinaturas</li>
+      <li class="table-link" data-table="pagamentos">▦ pagamentos</li>
+    </ul>
+
+    <div class="side-actions">
+      <button id="btnBackup">Backup SQL</button>
+      <button id="btnReset">Resetar dados</button>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <header class="serverbar">
+      <span>Servidor: localhost</span>
+      <span>Banco de Dados: server_dados_assinantes</span>
+      <span id="currentTableLabel">Tabela: assinantes</span>
+    </header>
+
+    <nav class="topnav">
+      <button class="active" data-view="estrutura">Estrutura</button>
+      <button data-view="sql">SQL</button>
+      <button data-view="pesquisar">Pesquisar</button>
+      <button data-view="inserir">Inserir</button>
+      <button data-view="exportar">Exportar</button>
+      <button data-view="importar">Importar</button>
+      <button data-view="operacoes">Operações</button>
+      <button data-view="relatorios">Relatórios</button>
+    </nav>
+
+    <section class="notice" id="notice">Sistema pronto. Selecione uma tabela ou ação.</section>
+
+    <section class="view active" id="view-estrutura">
+      <section class="filterbox">
+        <strong>Filtros</strong>
+        <label>Contendo a palavra:
+          <input id="filterInput" placeholder="Digite para filtrar tabelas..." />
+        </label>
+      </section>
+
+      <section class="table-panel">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Tabela</th>
+              <th>Ações</th>
+              <th>Registros</th>
+              <th>Tipo</th>
+              <th>Agrupamento</th>
+              <th>Tamanho</th>
+            </tr>
+          </thead>
+          <tbody id="dbTable"></tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              <td id="tableTotal">5 tabelas</td>
+              <td>Soma</td>
+              <td id="recordTotal">0</td>
+              <td>InnoDB</td>
+              <td>utf8mb4_unicode_ci</td>
+              <td>1.2 MB</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <section class="bulk-actions">
+        <label><input type="checkbox" id="checkAll" /> Marcar todos</label>
+        <select id="bulkAction">
+          <option value="">Com os selecionados:</option>
+          <option value="exportar">Exportar</option>
+          <option value="limpar">Limpar</option>
+          <option value="eliminar">Eliminar</option>
+        </select>
+        <button id="runBulk">Executar</button>
+      </section>
+
+      <section class="create-table">
+        <h3>Criar tabela</h3>
+        <div class="formline">
+          <label>Nome:
+            <input id="newTableName" placeholder="nova_tabela" />
+          </label>
+          <label>Número de colunas:
+            <input id="newTableCols" type="number" value="4" min="1" />
+          </label>
+          <button id="createTableBtn">Executar</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="view" id="view-pesquisar">
+      <section class="filterbox">
+        <strong>Pesquisar registros</strong>
+        <label>Busca geral:
+          <input id="subscriberSearch" placeholder="Buscar por nome, email, telefone ou período..." />
+        </label>
+      </section>
+      <div id="searchResults"></div>
+    </section>
+
+    <section class="view" id="view-inserir">
+      <section class="records-panel">
+        <div class="panel-title"><h3>Inserir novo assinante</h3></div>
+        <form id="subscriberForm" class="form-grid">
+          <label>Nome<input required name="nome" placeholder="Nome completo"></label>
+          <label>Idade<input required name="idade" type="number" min="1" placeholder="35"></label>
+          <label>Endereço<input required name="endereco" placeholder="Rua, número - cidade/UF"></label>
+          <label>Telefone<input required name="telefone" placeholder="(11) 99999-9999"></label>
+          <label>E-mail<input required name="email" type="email" placeholder="email@dominio.com"></label>
+          <label>Data de ativação<input required name="dataAtivacao" type="date"></label>
+          <label>Período
+            <select required name="periodo">
+              <option value="">Selecione</option>
+              <option>Mensal</option>
+              <option>Bimestral</option>
+              <option>Trimestral</option>
+              <option>Anual</option>
+            </select>
+          </label>
+          <label>Valor pago<input required name="valor" type="number" step="0.01" placeholder="39.90"></label>
+          <button class="primary" type="submit">Salvar registro</button>
+        </form>
+      </section>
+    </section>
+
+    <section class="view" id="view-sql">
+      <section class="records-panel">
+        <div class="panel-title">
+          <h3>Console SQL</h3>
+          <button id="runSql">Executar SQL</button>
+        </div>
+        <textarea id="sqlConsole">SELECT * FROM assinantes;</textarea>
+        <pre id="sqlOutput">Resultado aparecerá aqui.</pre>
+      </section>
+    </section>
+
+    <section class="view" id="view-exportar">
+      <section class="records-panel">
+        <div class="panel-title">
+          <h3>Exportar dados</h3>
+          <button id="exportCsv">Exportar CSV</button>
+        </div>
+        <p>Gera um arquivo CSV simulado da tabela de assinantes.</p>
+      </section>
+    </section>
+
+    <section class="view" id="view-importar">
+      <section class="records-panel">
+        <div class="panel-title"><h3>Importar dados</h3></div>
+        <input type="file" id="importFile" accept=".csv,.sql,.json">
+        <p id="importStatus">Nenhum arquivo selecionado.</p>
+      </section>
+    </section>
+
+    <section class="view" id="view-operacoes">
+      <section class="records-panel">
+        <div class="panel-title"><h3>Operações da tabela</h3></div>
+        <div class="operation-grid">
+          <button data-op="otimizar">Otimizar tabela</button>
+          <button data-op="analisar">Analisar tabela</button>
+          <button data-op="reparar">Reparar tabela</button>
+          <button data-op="limpar">Limpar registros</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="view" id="view-relatorios">
+      <section class="records-panel">
+        <div class="panel-title"><h3>Relatórios gerenciais</h3></div>
+        <div class="metrics">
+          <article><span>Assinantes</span><strong id="metricSubscribers">0</strong></article>
+          <article><span>Receita total</span><strong id="metricRevenue">R$ 0,00</strong></article>
+          <article><span>Ticket médio</span><strong id="metricTicket">R$ 0,00</strong></article>
+          <article><span>Plano líder</span><strong id="metricPlan">-</strong></article>
+        </div>
+      </section>
+    </section>
+
+    <section class="records-panel main-records">
+      <div class="panel-title">
+        <h3 id="recordsTitle">Visualização: assinantes</h3>
+        <button id="goInsert">+ Inserir registro</button>
+      </div>
+
+      <table>
+        <thead id="recordHead"></thead>
+        <tbody id="recordRows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <dialog id="editModal">
+    <form method="dialog" id="editForm">
+      <div class="panel-title">
+        <h3>Editar assinante</h3>
+        <button type="button" id="closeEdit">×</button>
+      </div>
+      <div class="form-grid modal-grid">
+        <input type="hidden" name="id">
+        <label>Nome<input required name="nome"></label>
+        <label>Idade<input required name="idade" type="number"></label>
+        <label>Endereço<input required name="endereco"></label>
+        <label>Telefone<input required name="telefone"></label>
+        <label>E-mail<input required name="email" type="email"></label>
+        <label>Data de ativação<input required name="dataAtivacao" type="date"></label>
+        <label>Período
+          <select required name="periodo">
+            <option>Mensal</option>
+            <option>Bimestral</option>
+            <option>Trimestral</option>
+            <option>Anual</option>
+          </select>
+        </label>
+        <label>Valor pago<input required name="valor" type="number" step="0.01"></label>
+      </div>
+      <button class="primary full" type="submit">Atualizar registro</button>
+    </form>
+  </dialog>
+
+  <script src="src/app.js"></script>
+</body>
+</html>
